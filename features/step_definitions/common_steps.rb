@@ -1,10 +1,15 @@
-Given /^(.*) is (.*)$/ do |name,value|
-	@params = {} unless @params
-	@params[name] = value
+Given /^Content-Type is (.*)/ do |content_type|
+	@content_type = content_type
 end
 
-When /^I post the parameters to the (.*) webservice$/ do |component|
-	@uri = RestClient.post @@config[:services]["opentox-#{component}"], @params
+When /^I post (.*) to the (.*) webservice$/ do |data,component|
+	#puts @@config[:services]["opentox-#{component}"]
+	case data
+	when /^file:/
+		data = File.read(File.join(File.dirname(File.expand_path(__FILE__)),"../data",data.sub(/file:\s+/,'')))
+		@data = data
+	end
+	@uri = RestClient.post @@config[:services]["opentox-#{component}"], data, :content_type => @content_type
 	@resources << @uri unless /compound|feature/ =~ component
 end
 
@@ -18,7 +23,11 @@ Then /^the URI should contain (.+)$/ do |result|
 	assert regexp =~ @uri, true
 end
 
-Then /^the URI response should be (\S+)$/ do |result|
-	assert result == @response, true
+Then /^the URI response should be (.+)$/ do |data|
+	case data
+	when /^file:/
+		data = @data
+	end
+	assert data == @response, true
 end
 

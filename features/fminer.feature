@@ -1,16 +1,14 @@
 @rest
 Feature: Fminer
 
-	Scenario Outline: Add data to a dataset
-		Given name is <name>
-		And compound_format is smiles
-		And a file <filename>
-		When I apply fminer 
+	Scenario Outline: Create fminer features
+		Given Content-Type is application/rdf+xml
+		And I post <data> to the dataset webservice
+		When I apply fminer for <feature>
 		Then I should receive a valid URI
-		And the URI should return a YAML representation
 
 	Examples:
-		|name                   |filename                   |
-		|Hamster Carcinogenicity|hamster_carcinogenicity.csv|
-	#|Salmonella mutagenicity|kazius.csv|
+		|feature                   |data                   |
+		|http://www.epa.gov/ncct/dsstox/CentralFieldDef.html#ActivityOutcome_CPDBAS_Hamster|file: hamster_carcinogenicity.rdf|
+	#|http://dx.doi.org/10.1021/jm040835a|file: data/kazius.rdf|
 
