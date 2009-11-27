@@ -15,6 +15,7 @@ end
 
 Then /^I should receive a valid URI$/ do
 	@response = RestClient.get @uri
+	#puts @response
 end
 
 Then /^the URI should contain (.+)$/ do |result|
