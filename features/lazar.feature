@@ -13,5 +13,5 @@ Feature: Create a model and predict an unknown compound
 
 	Examples:
 		|feature                   |data                   |smiles    |prediction|
-		|http://www.epa.gov/ncct/dsstox/CentralFieldDef.html#ActivityOutcome_CPDBAS_Hamster|file: hamster_carcinogenicity.rdf|c1ccccc1NN|true      |
+		|http://www.epa.gov/NCCT/dsstox/CentralFieldDef.html#ActivityOutcome_CPDBAS_Hamster|file: hamster_carcinogenicity.rdf|c1ccccc1NN|true      |
 

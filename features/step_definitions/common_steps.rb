@@ -14,8 +14,9 @@ When /^I post (.*) to the (.*) webservice$/ do |data,component|
 end
 
 Then /^I should receive a valid URI$/ do
-	@response = RestClient.get @uri
-	#puts @response
+	#puts @uri
+	@response = RestClient.get @uri, :accept => '*/*'
+	puts @response.to_yaml
 end
 
 Then /^the URI should contain (.+)$/ do |result|
