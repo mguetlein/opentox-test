@@ -7,8 +7,8 @@ end
 
 Then /^the model should predict (.*) for (.*)$/ do |activity,smiles|
 	compound_uri = OpenTox::Compound.new(:smiles => smiles).uri
-	puts @uri
-	puts compound_uri
+	#puts @uri
+	#puts compound_uri
 	prediction = RestClient.post @uri, :compound_uri => compound_uri, :type => "yaml"
 	puts prediction
 	#assert_equal activity.to_s, YAML.load(prediction)[:values]['classification'].to_s

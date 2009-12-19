@@ -3,6 +3,7 @@ Given /^Content-Type is (.*)/ do |content_type|
 end
 
 When /^I post (.*) to the (.*) webservice$/ do |data,component|
+	#puts @@config[:services].to_yaml
 	#puts @@config[:services]["opentox-#{component}"]
 	case data
 	when /^file:/
@@ -16,7 +17,7 @@ end
 Then /^I should receive a valid URI$/ do
 	#puts @uri
 	@response = RestClient.get @uri, :accept => '*/*'
-	puts @response.to_yaml
+	#puts @response.to_yaml
 end
 
 Then /^the URI should contain (.+)$/ do |result|
