@@ -1,6 +1,8 @@
 When /^I create a lazar model for (.*)$/ do |feature_uri|
 	training_uri = @uri
+	#puts `curl #{training_uri}`
 	@uri = RestClient.post File.join(@@config[:services]["opentox-algorithm"], "lazar"), :dataset_uri => training_uri, :feature_uri => feature_uri, :feature_generation_uri => File.join(@@config[:services]["opentox-algorithm"], "fminer")
+	@task = OpenTox::Task.find(@uri)
 	@resources << @uri
 	#puts @uri.to_yaml
 end

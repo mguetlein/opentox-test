@@ -1,10 +1,10 @@
-When /^I create a task for a (.*)$/ do |resource_uri|
-	@uri = RestClient.post @@config[:services]["opentox-task"], :resource_uri => resource_uri
+When /^I create a task$/ do
+	@uri = RestClient.post @@config[:services]["opentox-task"], nil
 	@resources << @uri
 end
 
-When /^I finish the task$/ do
-	RestClient.put File.join(@uri,"completed"), nil
+When /^I finish the task for (.*)$/ do |resource|
+	RestClient.put File.join(@uri,"completed"), :resource => resource
 end
 
 

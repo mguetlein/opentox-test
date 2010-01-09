@@ -4,7 +4,8 @@ Feature: Fminer
 	Scenario Outline: Create fminer features
 		Given Content-Type is application/rdf+xml
 		And I post <data> to the dataset webservice
-		When I apply fminer for <feature>
+		And I apply fminer for <feature>
+		When the task is completed
 		Then I should receive a valid URI
 
 	Examples:

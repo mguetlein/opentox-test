@@ -14,6 +14,13 @@ When /^I post (.*) to the (.*) webservice$/ do |data,component|
 	@resources << @uri unless /compound|feature/ =~ component
 end
 
+When /^the task is completed$/ do
+	@task.wait_for_completion
+	@uri = @task.resource
+	#puts @uri
+	@resources << @uri
+end
+
 Then /^I should receive a valid URI$/ do
 	#puts @uri
 	@response = RestClient.get @uri, :accept => '*/*'
