@@ -3,6 +3,7 @@ Given /^Content-Type is (.*)/ do |content_type|
 end
 
 When /^I post (.*) to the (.*) webservice$/ do |data,component|
+	#puts @@config[:services].to_yaml
 	#puts @@config[:services]["opentox-#{component}"]
 	case data
 	when /^file:/
@@ -13,15 +14,17 @@ When /^I post (.*) to the (.*) webservice$/ do |data,component|
 	@resources << @uri unless /compound|feature/ =~ component
 end
 
-When /^I get (.*) from the (.*) webservice$/ do |get_request,component|
-	@uri = @@config[:services]["opentox-#{component}"] + "test/#{component}/" + get_request
-  @response = RestClient.get @uri, :accept => @content_type
+When /^the task is completed$/ do
+	@task.wait_for_completion
+	@uri = @task.resource
+	#puts @uri
+	@resources << @uri
 end
 
 Then /^I should receive a valid URI$/ do
 	#puts @uri
 	@response = RestClient.get @uri, :accept => '*/*'
-	puts @response.to_yaml
+	#puts @response.to_yaml
 end
 
 Then /^the URI should contain (.+)$/ do |result|

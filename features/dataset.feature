@@ -8,4 +8,4 @@ Feature: Dataset
 
 	Examples:
 		|data|
-		|file: hamster_carcinogenicity.rdf|
+		|file: hamster_carcinogenicity.owl|
