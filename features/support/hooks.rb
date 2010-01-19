@@ -6,7 +6,7 @@ After do |scenario|
 	@resources.uniq!
 	@resources.each do |resource| 
 		begin
-			RestClient.delete resource 
+		  RestClient::Resource.new(resource, :user => @@users[:users].keys[0], :password => @@users[:users].values[0]).delete 
 		rescue
 			puts "Cannot delete " + resource
 		end
