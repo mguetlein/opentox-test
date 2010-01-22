@@ -14,6 +14,11 @@ When /^I post (.*) to the (.*) webservice$/ do |data,component|
 	@resources << @uri unless /compound|feature/ =~ component
 end
 
+Given /^The dataset uri is (.*)$/ do |uri|
+	@uri = uri
+	# do not delete this !!
+end
+
 When /^the task is completed$/ do
 	@task.wait_for_completion
 	@uri = @task.resource
@@ -22,7 +27,7 @@ When /^the task is completed$/ do
 end
 
 Then /^I should receive a valid URI$/ do
-	#puts @uri
+	puts @uri
 	@response = RestClient.get @uri, :accept => '*/*'
 	#puts @response.to_yaml
 end

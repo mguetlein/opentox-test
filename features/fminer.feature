@@ -10,6 +10,7 @@ Feature: Fminer
 
 	Examples:
 		|feature                   |data                   |
-		|http://www.epa.gov/NCCT/dsstox/CentralFieldDef.html#ActivityOutcome_CPDBAS_Hamster|file: hamster_carcinogenicity.owl|
-	#|http://dx.doi.org/10.1021/jm040835a|file: data/kazius.rdf|
+		|http://ambit.uni-plovdiv.bg:8080/ambit2/feature/12156                             |file: hamster_carcinogenicity_ambit.owl|
+ # this is too big for sqlite
+	#|http://www.epa.gov/NCCT/dsstox/CentralFieldDef.html#ActivityOutcome_CPDBAS_Hamster|file: hamster_carcinogenicity.owl|
 
