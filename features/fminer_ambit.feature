@@ -9,5 +9,7 @@ Feature: Fminer
 
 	Examples:
 		|feature                                              |dataset_uri                                      |
-		|http://ambit.uni-plovdiv.bg:8080/ambit2/feature/12100|http://ambit.uni-plovdiv.bg:8080/ambit2/dataset/8|
+		|http://ambit.uni-plovdiv.bg:8080/ambit2/reference/11847|http://ambit.uni-plovdiv.bg:8080/ambit2/dataset/9|
+		#|http://ambit.uni-plovdiv.bg:8080/ambit2/feature/12156|http://ambit.uni-plovdiv.bg:8080/ambit2/dataset/9|
+	#|http://ambit.uni-plovdiv.bg:8080/ambit2/feature/12100|http://ambit.uni-plovdiv.bg:8080/ambit2/dataset/8|
 
