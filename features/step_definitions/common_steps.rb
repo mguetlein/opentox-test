@@ -43,6 +43,8 @@ Then /^the URI response should be (.+)$/ do |data|
 	when /^file:/
 		data = @data
 	end
+	puts data
+	puts @response
 	assert data == @response, true
 end
 
