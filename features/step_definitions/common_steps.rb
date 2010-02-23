@@ -11,6 +11,7 @@ When /^I post (.*) to the (.*) webservice$/ do |data,component|
 		@data = data
 	end
 	@uri = RestClient::Resource.new(@@config[:services]["opentox-#{component}"], :user => @@users[:users].keys[0], :password => @@users[:users].values[0]).post data, :content_type => @content_type
+	puts @uri
 	@resources << @uri unless /compound|feature/ =~ component
 end
 
@@ -27,7 +28,7 @@ When /^the task is completed$/ do
 end
 
 Then /^I should receive a valid URI$/ do
-	puts @uri
+	#puts @uri
 	@response = RestClient.get @uri, :accept => '*/*'
 	#puts @response.to_yaml
 end
@@ -43,8 +44,8 @@ Then /^the URI response should be (.+)$/ do |data|
 	when /^file:/
 		data = @data
 	end
-	puts data
-	puts @response
+	#puts data
+	#puts @response
 	assert data == @response, true
 end
 

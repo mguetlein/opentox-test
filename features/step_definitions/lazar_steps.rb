@@ -13,18 +13,25 @@ Then /^the model should predict (.*) for (.*)$/ do |activity,smiles|
 	#puts @uri
 	#puts compound_uri
   resource = RestClient::Resource.new(@uri, :user => @@users[:users].keys[0], :password => @@users[:users].values[0])	
-	prediction = resource.post :compound_uri => compound_uri, :accept => "application/x-yaml"
+	prediction_rdf = resource.post :compound_uri => compound_uri#, :accept => "application/x-yaml"
 	model = Redland::Model.new Redland::MemoryStore.new
 	parser = Redland::Parser.new
-	parser.parse_string_into_model(model,prediction,'/')
+	parser.parse_string_into_model(model,prediction_rdf,'/')
 
-	#puts prediction
+	puts prediction_rdf
 	model.subjects(RDF['type'], OT['FeatureValue']).each do |v|
 		feature = model.object(v,OT['feature'])
 		feature_name = model.object(feature,DC['title']).to_s
 		prediction = model.object(v,OT['value']).to_s if feature_name.match(/classification/)
 	end
-	#puts values.to_yaml
+=begin
+	model.subjects(RDF['type'], OT['FeatureValue']).each do |v|
+		feature = model.object(v,OT['feature'])
+		feature_name = model.object(feature,DC['title']).to_s
+		prediction = model.object(v,OT['value']).to_s if feature_name.match(/classification/)
+	end
+=end
+	puts prediction
 	assert_equal activity.to_s, prediction
 end
 
