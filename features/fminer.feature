@@ -2,15 +2,15 @@
 Feature: Fminer
 
 	Scenario Outline: Create fminer features
-		Given Content-Type is application/rdf+xml
+		Given Content-Type is application/x-yaml
 		And I post <data> to the dataset webservice
+		And the task is completed
 		And I apply fminer for <feature>
 		When the task is completed
 		Then I should receive a valid URI
 
 	Examples:
 		|feature                   |data                   |
-		|http://ambit.uni-plovdiv.bg:8080/ambit2/feature/12156                             |file: hamster_carcinogenicity_ambit.owl|
-		|http://www.epa.gov/NCCT/dsstox/CentralFieldDef.html#ActivityOutcome_CPDBAS_Hamster|file: hamster_carcinogenicity.owl|
+		|http://www.epa.gov/NCCT/dsstox/CentralFieldDef.html#ActivityOutcome_CPDBAS_Hamster|file: hamster_carcinogenicity.yaml|
  # this is too big for sqlite
 
