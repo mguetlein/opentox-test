@@ -6,6 +6,7 @@ Feature: Create a model and predict an unknown compound
 
 	Scenario Outline:
 		Given Content-Type is application/x-yaml
+		And Accept-Type is application/x-yaml
 		And I post <data> to the dataset webservice
 		And the task is completed
 		And I create a lazar model for <feature>

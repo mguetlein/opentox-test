@@ -3,6 +3,7 @@ Feature: Create compound URI
 
 	Scenario Outline: Create and get URIs
 		Given Content-Type is <mime-type>
+		And Accept-Type is chemical/x-daylight-smiles
 		When I post <descriptor> to the compound webservice
 		Then I should receive a valid URI
 		And the URI should contain <inchi>

@@ -2,6 +2,10 @@ Given /^Content-Type is (.*)/ do |content_type|
 	@content_type = content_type
 end
 
+Given /^Accept-Type is (.*)/ do |accept_type|
+	@accept_type = accept_type
+end
+
 When /^I post (.*) to the (.*) webservice$/ do |data,component|
 	#puts @@config[:services].to_yaml
 	#puts @@config[:services]["opentox-#{component}"]
@@ -18,7 +22,7 @@ When /^I post (.*) to the (.*) webservice$/ do |data,component|
 		@uri = uri.chomp.to_s
 		@resources << @uri unless /compound|feature/ =~ component
 	end
-	puts @uri
+	#puts @uri
 end
 
 Given /^The dataset uri is (.*)$/ do |uri|
@@ -29,14 +33,14 @@ end
 When /^the task is completed$/ do
 	@task.wait_for_completion
 	@uri = @task.resource.chomp
-	puts @uri
+	#puts @uri
 	@resources << @uri
 end
 
 Then /^I should receive a valid URI$/ do
 	#puts @uri
-	@response = RestClient.get @uri, :accept => @content_type
-	puts @response.to_yaml
+	@response = RestClient.get @uri, :accept => @accept_type
+	#puts @response.to_yaml
 end
 
 Then /^the URI should contain (.+)$/ do |result|
