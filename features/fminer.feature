@@ -5,7 +5,6 @@ Feature: Fminer
 		Given Content-Type is application/x-yaml
 		And Accept-Type is application/x-yaml
 		And I post <data> to the dataset webservice
-		#And the task is completed
 		And I apply fminer for <feature>
 		When the task is completed
 		Then I should receive a valid URI

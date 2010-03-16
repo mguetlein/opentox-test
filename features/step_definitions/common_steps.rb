@@ -7,8 +7,6 @@ Given /^Accept-Type is (.*)/ do |accept_type|
 end
 
 When /^I post (.*) to the (.*) webservice$/ do |data,component|
-	#puts @@config[:services].to_yaml
-	#puts @@config[:services]["opentox-#{component}"]
 	case data
 	when /^file:/
 		data = File.read(File.join(File.dirname(File.expand_path(__FILE__)),"../data",data.sub(/file:\s+/,'')))

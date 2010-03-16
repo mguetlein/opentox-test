@@ -17,3 +17,17 @@ Then /^the model should predict (.*) for (.*)$/ do |activity,smiles|
 	assert_equal activity.to_s, classification.to_s
 end
 
+Given /^I post the test dataset (.*)$/ do |test_dataset|
+	data = File.read(File.join(File.dirname(File.expand_path(__FILE__)),"../data",test_dataset.sub(/file:\s+/,'')))
+	@test_uri = RestClient::Resource.new(@@config[:services]["opentox-dataset"], :user => @@users[:users].keys[0], :password => @@users[:users].values[0]).post(data, :content_type => @content_type).to_s.chomp
+	@resources << @test_uri
+end
+
+Given /^I predict the test dataset$/ do 
+	@uri = `curl -X POST -d 'dataset_uri=#{@test_uri}' -H 'Accept:application/x-yaml' #{@uri}`.chomp
+	#puts @uri
+	@task = OpenTox::Task.find(@uri)
+	#puts @task
+	@resources << @uri
+end
+
