@@ -3,7 +3,6 @@ Before do
 end
 
 After do |scenario|
-=begin
 	@resources.uniq!
 	@resources.each do |resource| 
 		begin
@@ -12,5 +11,4 @@ After do |scenario|
 			puts "Cannot delete " + resource
 		end
 	end
-=end
 end
