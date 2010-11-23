@@ -7,7 +7,7 @@ class FeatureTest < Test::Unit::TestCase
 
   def setup
     @features = [
-      "http://localhost/dataset/1/feature/Hamster%20Carcinogenicity",
+      @@classification_training_dataset.features.keys.first,
       "http://apps.ideaconsult.net:8080/ambit2/feature/35796"
     ]
   end

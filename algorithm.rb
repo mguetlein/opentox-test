@@ -7,9 +7,9 @@ class AlgorithmTest < Test::Unit::TestCase
 
   def setup
     @algorithms = [
-      "http://localhost/algorithm/fminer/bbrc",
-      "http://localhost/algorithm/fminer/last",
-      "http://localhost/algorithm/lazar",
+      File.join(CONFIG[:services]["opentox-algorithm"],"fminer","bbrc"),
+      File.join(CONFIG[:services]["opentox-algorithm"],"fminer","last"),
+      File.join(CONFIG[:services]["opentox-algorithm"],"lazar")
       #"http://apps.ideaconsult.net:8080/ambit2/algorithm/J48",
     ]
   end
@@ -17,15 +17,14 @@ class AlgorithmTest < Test::Unit::TestCase
   def teardown
   end
 
-=begin
   def test_metadata
     @algorithms.each do |algorithm|
       puts algorithm
       validate_owl(algorithm)
     end
   end
-=end
 
+=begin
   def test_run_external
     {
       #"http://opentox.informatik.tu-muenchen.de:8080/OpenTox-dev/algorithm/J48" => {:dataset_uri => "http://apps.ideaconsult.net:8080/ambit2/dataset/10", :prediction_feature => "http://apps.ideaconsult.net:8080/ambit2/feature/21595"},
@@ -40,5 +39,6 @@ class AlgorithmTest < Test::Unit::TestCase
       puts dataset.to_yaml
     end
   end
+=end
 
 end

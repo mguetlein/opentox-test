@@ -4,76 +4,51 @@ require 'test/unit'
 
 class LazarTest < Test::Unit::TestCase
 
-  def setup
-    @dataset = OpenTox::Dataset.new "http://localhost/dataset/1"
-  end
-
-  def teardown
-  end
-
 =begin
 =end
   def test_create_regression_model
-    @dataset = OpenTox::Dataset.create
-    @dataset.load_csv(File.open("data/EPAFHM.csv").read)
-    @dataset.save
-    @feature = File.join @dataset.uri,"feature/LC50_mmol" 
-    @model_uri = OpenTox::Algorithm::Lazar.new.run({:dataset_uri => @dataset.uri}).to_s
-    model = OpenTox::Model::Lazar.find @model_uri
-    puts model.to_yaml
-  end
-
-  def test_regr_prediction
-    lazar = OpenTox::Model::Lazar.find("http://localhost/model/8")
+    model_uri = OpenTox::Algorithm::Lazar.new.run({:dataset_uri => @@regression_training_dataset.uri}).to_s
+    lazar = OpenTox::Model::Lazar.find model_uri
+    assert_equal lazar.features.size, 222
     compound = OpenTox::Compound.from_smiles("c1ccccc1NN")
-    prediction = lazar.run(:compound_uri => compound.uri)
-    puts prediction
+    prediction_uri = lazar.run(:compound_uri => compound.uri)
+    prediction = OpenTox::LazarPrediction.find(prediction_uri)
+    assert_equal prediction.value(compound), 0.149518871336721
+    assert_equal prediction.confidence(compound), 0.615246530364447
+    assert_equal prediction.neighbors(compound).size, 81
+    prediction.delete
+    lazar.delete
   end
 
   def test_default_classification_model
-    @dataset_uri = "http://localhost/dataset/1"
-    feature = "http://localhost/dataset/1/feature/Hamster%20Carcinogenicity"
-    lazar = OpenTox::Algorithm::Lazar.new
-    @model_uri = lazar.run({:dataset_uri => @dataset.uri, :prediction_feature => feature, :feature_generation_uri => File.join(CONFIG[:services]["opentox-algorithm"], "fminer","bbrc")}).to_s
-    model = YAML.load(OpenTox::RestClientWrapper.get(@model_uri,:accept => "application/x-yaml"))
-    assert_equal 41, model.features.size
-    puts model.to_yaml
-  end
-
-  def test_classification_prediction
-    lazar = OpenTox::Model::Lazar.find("http://localhost/model/7")
+    # create model
+    model_uri = OpenTox::Algorithm::Lazar.new.run({:dataset_uri => @@classification_training_dataset.uri}).to_s
+    lazar = OpenTox::Model::Lazar.find model_uri
+    assert_equal lazar.features.size, 41
+    # single prediction
     compound = OpenTox::Compound.from_smiles("c1ccccc1NN")
-    prediction = lazar.run(:compound_uri => compound.uri)
-    puts prediction
-  end
-
-=begin
-  def test_prediction_with_database_activity
-    lazar = OpenTox::Model::Lazar.find("http://localhost/model/7")
+    prediction_uri = lazar.run(:compound_uri => compound.uri)
+    prediction = OpenTox::LazarPrediction.find(prediction_uri)
+    assert_equal prediction.value(compound), false
+    assert_equal prediction.confidence(compound), 0.25857114104619
+    assert_equal prediction.neighbors(compound).size, 15
+    prediction.delete
+    # dataset activity
     compound = OpenTox::Compound.from_smiles("CNN")
-    prediction = lazar.run(:compound_uri => compound.uri)
-    puts prediction
+    prediction = OpenTox::LazarPrediction.find lazar.run(:compound_uri => compound.uri)
+    assert !prediction.measured_activities(compound).empty?
+    puts prediction.measured_activities(compound).first.inspect
+    assert_equal prediction.measured_activities(compound).first, true
+    assert prediction.value(compound).nil?
+    prediction.delete
+    # dataset prediction
+    test_dataset = OpenTox::Dataset.create_from_csv_file("data/multicolumn.csv")
+    prediction = OpenTox::LazarPrediction.find lazar.run(:dataset_uri => test_dataset.uri)
+    assert_equal prediction.compounds.size, 4
+    compound = OpenTox::Compound.new prediction.compounds.first
+    assert_equal prediction.value(compound), false
+    prediction.delete
+    lazar.delete
   end
 
-  def test_dataset_prediction
-    uri = RestClient.post('http://localhost/dataset', {:file => File.new("data/multicolumn.csv")},{:accept => "text/uri-list"}).to_s.chomp
-    lazar = OpenTox::Model::Lazar.find("http://localhost/model/7")
-    #prediction = lazar.run(:dataset_uri => uri)
-    prediction = lazar.predict_dataset(uri)
-    puts prediction.to_yaml
-  end
-
-  def test_create_dataset_model
-  end
-
-  def test_classification_prediction
-    @model_uri = OpenTox::Model::Lazar.all.last
-    model = OpenTox::Model::Lazar.new(@model_uri)
-    compound = OpenTox::Compound.from_smiles("c1ccccc1NN")
-    puts model.run(:compound_uri => compound.uri)
-  end
-=end
-
-  def test_regression_prediction
-  end
 end

@@ -20,8 +20,9 @@ class TaskTest < Test::Unit::TestCase
 
 
   def test_rdf
-    task = OpenTox::Task.new OpenTox::Task.all.first
+    task = OpenTox::Task.new OpenTox::Task.all.last
     validate_owl(task.uri)
+    #puts task.uri
   end
 =begin
 =end

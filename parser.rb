@@ -10,8 +10,8 @@ class ParserTest < Test::Unit::TestCase
     #@new_dataset.add_metadata( OT.hasSource => "data/hamster_carcinogenicity.csv", DC.creator => "opentox-test", DC.title => "Hamster Carcinogenicity" )
     #@new_dataset.save
     @datasets = {
-      #@new_dataset.uri => {
-      "http://localhost/dataset/1" => {
+      
+      @@classification_training_dataset.uri => {
         :nr_compounds => 85,
         :nr_features => 1,
         :nr_dataset_features => 1,

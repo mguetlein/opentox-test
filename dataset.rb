@@ -11,7 +11,7 @@ class DatasetTest < Test::Unit::TestCase
     #@new_dataset.save
     @datasets = {
       #@new_dataset.uri => {
-      "http://localhost/dataset/1" => {
+      @@classification_training_dataset.uri => {
         :nr_compounds => 85,
         :nr_features => 1,
         :nr_dataset_features => 1,
@@ -31,7 +31,6 @@ class DatasetTest < Test::Unit::TestCase
   end
 
 =begin
-=end
   def test_save_external
 
     @dataset = OpenTox::Dataset.find "http://apps.ideaconsult.net:8080/ambit2/dataset/2698"
@@ -42,13 +41,13 @@ class DatasetTest < Test::Unit::TestCase
     #@dataset.load_csv(File.open("data/hamster_carcinogenicity.csv").read)
     #@dataset.save
   end
+=end
 
   def test_create
     dataset = OpenTox::Dataset.create
     dataset.save
-    puts dataset.uri
     assert_kind_of URI::HTTP, URI.parse(dataset.uri)
-    #dataset.delete
+    dataset.delete
   end
 
   def test_all
@@ -57,56 +56,51 @@ class DatasetTest < Test::Unit::TestCase
   end
 
   def test_owl
-    validate_owl  "http://localhost/dataset/1" 
+    validate_owl @@classification_training_dataset.uri
+    validate_owl @@regression_training_dataset.uri
     # ambit datasets do ot validate
     #@datasets.keys.each {|d| validate_owl d }
   end
 
   def test_from_yaml
-    # TODO: fix uri
     @dataset = OpenTox::Dataset.new
     @dataset.load_yaml(File.open("data/hamster_carcinogenicity.yaml").read)
     hamster_carc?
   end
 
   def test_rest_csv
-    uri = OpenTox::RestClientWrapper.post('http://localhost/dataset',{:accept => "text/uri-list"}, {:file => File.new("data/hamster_carcinogenicity.csv")}).to_s.chomp
+    uri = OpenTox::RestClientWrapper.post(CONFIG[:services]["opentox-dataset"],{:accept => "text/uri-list"}, {:file => File.new("data/hamster_carcinogenicity.csv")}).to_s.chomp
     @dataset = OpenTox::Dataset.new uri
     @dataset.load_all
     hamster_carc?
-    #puts @dataset.to_yaml
-    #@dataset.delete
   end
 
   def test_multicolumn_csv
-    uri = OpenTox::RestClientWrapper.post('http://localhost/dataset',{:accept => "text/uri-list"}, {:file => File.new("data/multicolumn.csv")}).to_s.chomp
-    puts uri
+    uri = OpenTox::RestClientWrapper.post(CONFIG[:services]["opentox-dataset"],{:accept => "text/uri-list"}, {:file => File.new("data/multicolumn.csv")}).to_s.chomp
     @dataset = OpenTox::Dataset.new uri
     @dataset.load_all
-    #puts @dataset.to_yaml
     assert_equal 5, @dataset.features.size
     assert_equal 4, @dataset.compounds.size
-    @dataset.delete
   end
 
   def test_from_csv
     @dataset = OpenTox::Dataset.new
     @dataset.load_csv(File.open("data/hamster_carcinogenicity.csv").read)
     hamster_carc?
+    @dataset.delete
   end
 
   def test_from_excel
     @dataset = OpenTox::Dataset.new
     @dataset.load_spreadsheet(Excel.new("data/hamster_carcinogenicity.xls"))
     hamster_carc?
-    #@dataset.delete
+    @dataset.delete
   end
 
   def test_load_metadata
     @datasets.each do |uri,data|
       @dataset = OpenTox::Dataset.find(uri)
-      #puts @dataset.inspect
-      assert_not_nil @dataset.metadata[DC.title]
+      assert @dataset.metadata.size != 0
     end
   end
 
@@ -122,7 +116,6 @@ class DatasetTest < Test::Unit::TestCase
     @datasets.each do |uri,data|
       @dataset = OpenTox::Dataset.new(uri)
       @dataset.load_features
-      #puts @dataset.features.to_yaml
       assert_equal @dataset.features.keys.size,data[:nr_dataset_features]
     end
   end
@@ -168,7 +161,6 @@ class DatasetTest < Test::Unit::TestCase
     @datasets.each do |uri,data|
       @dataset = OpenTox::Dataset.new(uri)
       @dataset.load_all
-      #puts @dataset.to_ntriples
       assert_kind_of String, @dataset.to_ntriples
     end
   end
@@ -177,14 +169,12 @@ class DatasetTest < Test::Unit::TestCase
     @datasets.each do |uri,data|
       @dataset = OpenTox::Dataset.new(uri)
       @dataset.load_all
-      #puts @dataset.to_rdfxml
       assert_kind_of String, @dataset.to_rdfxml
     end
   end
 =begin
 =end
   def validate(data)
-    #puts @dataset.yaml
     assert_kind_of OpenTox::Dataset, @dataset
     assert_equal @dataset.data_entries.size, data[:nr_data_entries]
     assert_equal @dataset.compounds.size, data[:nr_compounds]

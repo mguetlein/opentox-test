@@ -1,11 +1,22 @@
 require 'rubygems'
-require 'cucumber'
-require 'cucumber/rake/task'
-require 'tasks/opentox'
+require 'opentox-ruby-api-wrapper'
 
-task :default => :features
-
-Cucumber::Rake::Task.new(:features) do |t|
-  t.cucumber_opts = "features --format pretty"
+task ARGV[0] do
+  puts ARGV[0]+".rb"
+  require "./"+ARGV[0]+".rb"
 end
 
+task :setup do
+  @@classification_training_dataset = OpenTox::Dataset.create_from_csv_file("data/hamster_carcinogenicity.csv")
+  @@regression_training_dataset = OpenTox::Dataset.create_from_csv_file("data/EPAFHM.csv")
+end
+
+task :teardown do
+  @@classification_training_dataset.delete
+  @@regression_training_dataset.delete
+end
+
+[:all, :feature, :dataset, :fminer, :lazar].each do |t|
+  task :teardown => t
+  task t => :setup 
+end

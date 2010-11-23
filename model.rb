@@ -7,7 +7,7 @@ class ModelTest < Test::Unit::TestCase
 
   def setup
     @models = [
-      "http://localhost/model/1",
+      OpenTox::Model.all.last,
       #"http://apps.ideaconsult.net:8080/ambit2/algorithm/J48",
     ]
   end
@@ -15,14 +15,13 @@ class ModelTest < Test::Unit::TestCase
   def teardown
   end
 
-=begin
   def test_metadata
     @models.each do |model|
       puts model
       validate_owl(model)
     end
   end
-=end
+=begin
   def test_run_external
     {
       #"http://opentox.informatik.tu-muenchen.de:8080/OpenTox-dev/algorithm/J48" => {:dataset_uri => "http://apps.ideaconsult.net:8080/ambit2/dataset/10", :prediction_feature => "http://apps.ideaconsult.net:8080/ambit2/feature/21595"},
@@ -39,4 +38,5 @@ class ModelTest < Test::Unit::TestCase
   end
 
 end
+=end
 
