@@ -13,7 +13,7 @@ class LazarTest < Test::Unit::TestCase
     compound = OpenTox::Compound.from_smiles("c1ccccc1NN")
     prediction_uri = lazar.run(:compound_uri => compound.uri)
     prediction = OpenTox::LazarPrediction.find(prediction_uri)
-    assert_equal prediction.value(compound), 0.149518871336721
+    assert_equal prediction.value(compound), 0.149480050002539
     assert_equal prediction.confidence(compound), 0.615246530364447
     assert_equal prediction.neighbors(compound).size, 81
     prediction.delete

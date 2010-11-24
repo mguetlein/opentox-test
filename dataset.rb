@@ -6,11 +6,7 @@ require 'validate-owl'
 class DatasetTest < Test::Unit::TestCase
 
   def setup
-    #@new_dataset = OpenTox::Dataset.from_csv(File.open("data/hamster_carcinogenicity.csv").read)
-    #@new_dataset.add_metadata( OT.hasSource => "data/hamster_carcinogenicity.csv", DC.creator => "opentox-test", DC.title => "Hamster Carcinogenicity" )
-    #@new_dataset.save
     @datasets = {
-      #@new_dataset.uri => {
       @@classification_training_dataset.uri => {
         :nr_compounds => 85,
         :nr_features => 1,
@@ -132,7 +128,7 @@ class DatasetTest < Test::Unit::TestCase
     @datasets.each do |uri,data|
       @dataset = OpenTox::Dataset.new(uri)
       @dataset.load_all
-      @dataset = YAML.load @dataset.to_yaml
+      #@dataset = YAML.load @dataset.to_yaml
       validate data
     end
   end
