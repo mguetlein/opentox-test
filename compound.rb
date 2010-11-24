@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'opentox-ruby-api-wrapper'
+require 'opentox-ruby'
 require 'test/unit'
 
 class CompoundTest < Test::Unit::TestCase

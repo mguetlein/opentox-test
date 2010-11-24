@@ -1,5 +1,5 @@
 require 'rubygems'
-require 'opentox-ruby-api-wrapper'
+require 'opentox-ruby'
 
 task ARGV[0] do
   puts ARGV[0]+".rb"

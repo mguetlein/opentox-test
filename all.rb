@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'test/unit'
-require 'opentox-ruby-api-wrapper'
+require 'opentox-ruby'
 require './compound.rb'
 require './feature.rb'
 require './dataset.rb'
