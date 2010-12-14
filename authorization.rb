@@ -1,0 +1,113 @@
+require "rubygems"
+require "opentox-ruby-api-wrapper"
+require "test/unit"
+
+TEST_USER = "guest"
+TEST_PW   = "guest"
+TEST_URI  = "http://only_a_test/test/" + rand(1000000).to_s
+
+class TestOpenToxAuthorizationBasic < Test::Unit::TestCase
+ 
+  def test_01_server
+    @aaserver = AA_SERVER
+    assert_equal(@aaserver, OpenTox::Authorization.server)
+  end
+ 
+  def test_02_get_token
+    tok = login
+    assert_not_nil tok
+    logout(tok)
+  end
+  
+  def test_03_is_valid_token
+    tok = login
+    assert_not_nil tok
+    assert OpenTox::Authorization.is_token_valid(tok)
+    logout(tok)
+  end
+  
+  def test_04_logout
+    tok = login  
+    assert logout(tok) 
+  end
+  
+  def test_05_list_policies
+    tok = login
+    assert_kind_of Array, OpenTox::Authorization.list_policies(tok)
+    logout(tok)
+  end
+  
+end
+
+class TestOpenToxAuthorizationLDAP < Test::Unit::TestCase
+
+  def test_01_list_groups
+    tok = login
+    assert_kind_of Array, OpenTox::Authorization.list_groups(tok)
+    logout(tok)
+  end  
+
+  def test_02_list_user_groups
+    tok = login
+    assert_kind_of Array, OpenTox::Authorization.list_groups(tok)
+    logout(tok)
+  end
+  
+  def test_03_get_user
+    tok = login
+    assert_equal TEST_USER, OpenTox::Authorization.get_user(tok)
+    logout(tok)
+  end
+
+end
+
+class TestOpenToxAuthorizationLDAP < Test::Unit::TestCase
+
+  def test_01_create_check_delete_default_policies
+    tok = login
+    res = OpenTox::Authorization.send_policy(TEST_URI, tok)
+    assert res
+    assert OpenTox::Authorization.uri_has_policy(TEST_URI, tok)
+    policies = OpenTox::Authorization.list_uri_policies(TEST_URI, tok)
+    assert_kind_of Array, policies
+    policies.each do |policy|
+      assert OpenTox::Authorization.delete_policy(policy, tok)
+    end
+    logout(tok)
+  end
+
+  def test_02_check_policy_rules
+    tok = login
+    tok_anonymous = OpenTox::Authorization.authenticate("anonymous","anonymous")
+    assert_not_nil tok_anonymous
+    res = OpenTox::Authorization.send_policy(TEST_URI, tok)
+    assert res
+    assert OpenTox::Authorization.uri_has_policy(TEST_URI, tok)
+    owner_rights = {"GET" => true, "POST" => true, "PUT" => true, "DELETE" => true}
+    groupmember_rights = {"GET" => true, "POST" => nil, "PUT" => nil, "DELETE" => nil}
+    owner_rights.each do |request, right|
+      assert_equal right, OpenTox::Authorization.authorize(TEST_URI, request, tok), "#{TEST_USER} requests #{request} to #{TEST_URI}"
+    end
+    groupmember_rights.each do |request, r|
+      assert_equal r, OpenTox::Authorization.authorize(TEST_URI, request, tok_anonymous), "anonymous requests #{request} to #{TEST_URI}"
+    end
+    
+    policies = OpenTox::Authorization.list_uri_policies(TEST_URI, tok)
+    assert_kind_of Array, policies
+    policies.each do |policy|
+      assert OpenTox::Authorization.delete_policy(policy, tok)
+    end
+    logout(tok)
+  end
+
+    
+end
+
+
+def logout (token)
+   OpenTox::Authorization.logout(token)
+end
+
+def login
+  OpenTox::Authorization.authenticate(TEST_USER,TEST_PW)
+end 
