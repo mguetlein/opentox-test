@@ -21,7 +21,7 @@ task :teardown do
   OpenTox::Authorization.logout(@@subjectid)
 end
 
-[:all, :feature, :dataset, :fminer, :lazar].each do |t|
+[:all, :feature, :dataset, :fminer, :lazar, :authorization].each do |t|
   task :teardown => t
   task t => :setup 
 end
