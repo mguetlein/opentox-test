@@ -32,7 +32,7 @@ class DatasetTest < Test::Unit::TestCase
     @dataset = OpenTox::Dataset.find "http://apps.ideaconsult.net:8080/ambit2/dataset/2698"
     #File.open("test.rdf","w+"){|f| f.puts @dataset.to_rdfxml}
     @dataset.uri = "http://apps.ideaconsult.net:8080/ambit2/dataset" 
-    uri = @dataset.save
+    uri = @dataset.save(@@subjectid)
     puts uri
     #@dataset.load_csv(File.open("data/hamster_carcinogenicity.csv").read)
     #@dataset.save
@@ -40,10 +40,10 @@ class DatasetTest < Test::Unit::TestCase
 =end
 
   def test_create
-    dataset = OpenTox::Dataset.create
-    dataset.save
+    dataset = OpenTox::Dataset.create(CONFIG[:services]["opentox-dataset"], @@subjectid)
+    dataset.save(@@subjectid)
     assert_kind_of URI::HTTP, URI.parse(dataset.uri)
-    dataset.delete
+    dataset.delete(@@subjectid)
   end
 
   def test_all
@@ -65,32 +65,33 @@ class DatasetTest < Test::Unit::TestCase
   end
 
   def test_rest_csv
-    uri = OpenTox::RestClientWrapper.post(CONFIG[:services]["opentox-dataset"],{:accept => "text/uri-list"}, {:file => File.new("data/hamster_carcinogenicity.csv")}).to_s.chomp
+    uri = OpenTox::RestClientWrapper.post(CONFIG[:services]["opentox-dataset"],{:accept => "text/uri-list"}, {:file => File.new("data/hamster_carcinogenicity.csv"), :subjectid => @@subjectid}).to_s.chomp
     @dataset = OpenTox::Dataset.new uri
     @dataset.load_all
     hamster_carc?
   end
 
   def test_multicolumn_csv
-    uri = OpenTox::RestClientWrapper.post(CONFIG[:services]["opentox-dataset"],{:accept => "text/uri-list"}, {:file => File.new("data/multicolumn.csv")}).to_s.chomp
+    uri = OpenTox::RestClientWrapper.post(CONFIG[:services]["opentox-dataset"],{:accept => "text/uri-list"}, {:file => File.new("data/multicolumn.csv"), :subjectid => @@subjectid}).to_s.chomp
     @dataset = OpenTox::Dataset.new uri
     @dataset.load_all
     assert_equal 5, @dataset.features.size
     assert_equal 4, @dataset.compounds.size
+    
   end
 
   def test_from_csv
     @dataset = OpenTox::Dataset.new
-    @dataset.load_csv(File.open("data/hamster_carcinogenicity.csv").read)
+    @dataset.load_csv(File.open("data/hamster_carcinogenicity.csv").read, @@subjectid)
     hamster_carc?
-    @dataset.delete
+    @dataset.delete(@@subjectid)
   end
 
   def test_from_excel
     @dataset = OpenTox::Dataset.new
-    @dataset.load_spreadsheet(Excel.new("data/hamster_carcinogenicity.xls"))
+    @dataset.load_spreadsheet(Excel.new("data/hamster_carcinogenicity.xls"), @@subjectid)
     hamster_carc?
-    @dataset.delete
+    @dataset.delete(@@subjectid)
   end
 
   def test_load_metadata
