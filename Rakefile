@@ -5,6 +5,7 @@ TEST_USER = "guest"
 TEST_PW   = "guest"
 
 task ARGV[0] do
+  puts ENV["RACK_ENV"]
   puts ARGV[0]+".rb"
   require "./"+ARGV[0]+".rb"
 end
