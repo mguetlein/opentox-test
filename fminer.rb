@@ -9,40 +9,40 @@ class FminerTest < Test::Unit::TestCase
 =end
   def test_bbrc
     feature = @@classification_training_dataset.features.keys.first
-    dataset_uri = OpenTox::Algorithm::Fminer::BBRC.new.run({:dataset_uri => @@classification_training_dataset.uri, :prediction_feature => feature}).to_s
+    dataset_uri = OpenTox::Algorithm::Fminer::BBRC.new.run({:dataset_uri => @@classification_training_dataset.uri, :prediction_feature => feature, :subjectid => @@subjectid}).to_s
     d =OpenTox::Dataset.new dataset_uri
     d.load_features
     assert_equal 41, d.features.size
     #validate_owl
-    d.delete
+    d.delete(@@subjectid)
   end
 
   def test_last
     feature = @@classification_training_dataset.features.keys.first
-    dataset_uri = OpenTox::Algorithm::Fminer::LAST.new.run({:dataset_uri => @@classification_training_dataset.uri, :prediction_feature => feature}).to_s
+    dataset_uri = OpenTox::Algorithm::Fminer::LAST.new.run({:dataset_uri => @@classification_training_dataset.uri, :prediction_feature => feature, :subjectid => @@subjectid}).to_s
     d =OpenTox::Dataset.new dataset_uri
     d.load_features
     assert_equal 35, d.features.size
     #validate_owl
-    d.delete
+    d.delete(@@subjectid)
   end
 
   def test_regression_bbrc
     feature = File.join @@regression_training_dataset.uri,"feature/LC50_mmol" 
-    dataset_uri = OpenTox::Algorithm::Fminer::BBRC.new.run({:dataset_uri => @@regression_training_dataset.uri, :prediction_feature => feature}).to_s
+    dataset_uri = OpenTox::Algorithm::Fminer::BBRC.new.run({:dataset_uri => @@regression_training_dataset.uri, :prediction_feature => feature, :subjectid => @@subjectid}).to_s
     d =OpenTox::Dataset.new dataset_uri
     d.load_features
     assert_equal 222, d.features.size
-    d.delete
+    d.delete(@@subjectid)
   end
 
   def test_regression_last
     feature = File.join @@regression_training_dataset.uri,"feature/LC50_mmol" 
-    dataset_uri = OpenTox::Algorithm::Fminer::LAST.new.run({:dataset_uri => @@regression_training_dataset.uri, :prediction_feature => feature}).to_s
+    dataset_uri = OpenTox::Algorithm::Fminer::LAST.new.run({:dataset_uri => @@regression_training_dataset.uri, :prediction_feature => feature, :subjectid => @@subjectid}).to_s
     d =OpenTox::Dataset.new dataset_uri
     d.load_features
     assert_equal 16, d.features.size
-    d.delete
+    d.delete(@@subjectid)
   end
 =begin
 =end

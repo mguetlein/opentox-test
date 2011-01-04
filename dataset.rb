@@ -32,7 +32,7 @@ class DatasetTest < Test::Unit::TestCase
     @dataset = OpenTox::Dataset.find "http://apps.ideaconsult.net:8080/ambit2/dataset/2698"
     #File.open("test.rdf","w+"){|f| f.puts @dataset.to_rdfxml}
     @dataset.uri = "http://apps.ideaconsult.net:8080/ambit2/dataset" 
-    uri = @dataset.save
+    uri = @dataset.save(@@subjectid)
     puts uri
     #@dataset.load_csv(File.open("data/hamster_carcinogenicity.csv").read)
     #@dataset.save
@@ -40,14 +40,14 @@ class DatasetTest < Test::Unit::TestCase
 =end
 
   def test_create
-    dataset = OpenTox::Dataset.create
-    dataset.save
+    dataset = OpenTox::Dataset.create(CONFIG[:services]["opentox-dataset"], @@subjectid)
+    dataset.save(@@subjectid)
     assert_kind_of URI::HTTP, URI.parse(dataset.uri)
-    dataset.delete
+    dataset.delete(@@subjectid)
   end
 
   def test_all
-    datasets = OpenTox::Dataset.all
+    datasets = OpenTox::Dataset.all(CONFIG[:services]["opentox-dataset"], @@subjectid)
     assert_kind_of Array, datasets
   end
 
@@ -65,37 +65,38 @@ class DatasetTest < Test::Unit::TestCase
   end
 
   def test_rest_csv
-    uri = OpenTox::RestClientWrapper.post(CONFIG[:services]["opentox-dataset"],{:accept => "text/uri-list"}, {:file => File.new("data/hamster_carcinogenicity.csv")}).to_s.chomp
+    uri = OpenTox::RestClientWrapper.post(CONFIG[:services]["opentox-dataset"],{:accept => "text/uri-list"}, {:file => File.new("data/hamster_carcinogenicity.csv"), :subjectid => @@subjectid}).to_s.chomp
     @dataset = OpenTox::Dataset.new uri
-    @dataset.load_all
+    @dataset.load_all(@@subjectid)
     hamster_carc?
   end
 
   def test_multicolumn_csv
-    uri = OpenTox::RestClientWrapper.post(CONFIG[:services]["opentox-dataset"],{:accept => "text/uri-list"}, {:file => File.new("data/multicolumn.csv")}).to_s.chomp
+    uri = OpenTox::RestClientWrapper.post(CONFIG[:services]["opentox-dataset"],{:accept => "text/uri-list"}, {:file => File.new("data/multicolumn.csv"), :subjectid => @@subjectid}).to_s.chomp
     @dataset = OpenTox::Dataset.new uri
-    @dataset.load_all
+    @dataset.load_all(@@subjectid)
     assert_equal 5, @dataset.features.size
     assert_equal 4, @dataset.compounds.size
+    
   end
 
   def test_from_csv
     @dataset = OpenTox::Dataset.new
-    @dataset.load_csv(File.open("data/hamster_carcinogenicity.csv").read)
+    @dataset.load_csv(File.open("data/hamster_carcinogenicity.csv").read, @@subjectid)
     hamster_carc?
-    @dataset.delete
+    @dataset.delete(@@subjectid)
   end
 
   def test_from_excel
     @dataset = OpenTox::Dataset.new
-    @dataset.load_spreadsheet(Excel.new("data/hamster_carcinogenicity.xls"))
+    @dataset.load_spreadsheet(Excel.new("data/hamster_carcinogenicity.xls"), @@subjectid)
     hamster_carc?
-    @dataset.delete
+    @dataset.delete(@@subjectid)
   end
 
   def test_load_metadata
     @datasets.each do |uri,data|
-      @dataset = OpenTox::Dataset.find(uri)
+      @dataset = OpenTox::Dataset.find(uri, @@subjectid)
       assert @dataset.metadata.size != 0
     end
   end
@@ -103,7 +104,7 @@ class DatasetTest < Test::Unit::TestCase
   def test_load_compounds
     @datasets.each do |uri,data|
       @dataset = OpenTox::Dataset.new(uri)
-      @dataset.load_compounds
+      @dataset.load_compounds(@@subjectid)
       assert_equal @dataset.compounds.size,data[:nr_compounds]
     end
   end
@@ -119,7 +120,7 @@ class DatasetTest < Test::Unit::TestCase
   def test_load_all
     @datasets.each do |uri,data|
       @dataset = OpenTox::Dataset.new(uri)
-      @dataset.load_all
+      @dataset.load_all(@@subjectid)
       validate data
     end
   end
@@ -127,7 +128,7 @@ class DatasetTest < Test::Unit::TestCase
   def test_yaml
     @datasets.each do |uri,data|
       @dataset = OpenTox::Dataset.new(uri)
-      @dataset.load_all
+      @dataset.load_all(@@subjectid)
       #@dataset = YAML.load @dataset.to_yaml
       validate data
     end
@@ -136,7 +137,7 @@ class DatasetTest < Test::Unit::TestCase
   def test_csv
     @datasets.each do |uri,data|
       @dataset = OpenTox::Dataset.new(uri)
-      @dataset.load_all
+      @dataset.load_all(@@subjectid)
       csv = @dataset.to_csv.split("\n")
       assert_equal csv.size, data[:nr_compounds]+1
       assert_equal csv.first.split(", ").size, data[:nr_dataset_features]+1
@@ -146,7 +147,7 @@ class DatasetTest < Test::Unit::TestCase
   def test_excel
     @datasets.each do |uri,data|
       @dataset = OpenTox::Dataset.new(uri)
-      @dataset.load_all
+      @dataset.load_all(@@subjectid)
       book =  @dataset.to_spreadsheet
       assert_kind_of Spreadsheet::Workbook, book
       #File.open("#{@dataset.id}.xls","w+"){|f| book.write f.path}
@@ -156,7 +157,7 @@ class DatasetTest < Test::Unit::TestCase
   def test_ntriples
     @datasets.each do |uri,data|
       @dataset = OpenTox::Dataset.new(uri)
-      @dataset.load_all
+      @dataset.load_all(@@subjectid)
       assert_kind_of String, @dataset.to_ntriples
     end
   end
@@ -164,7 +165,7 @@ class DatasetTest < Test::Unit::TestCase
   def test_owl
     @datasets.each do |uri,data|
       @dataset = OpenTox::Dataset.new(uri)
-      @dataset.load_all
+      @dataset.load_all(@@subjectid)
       assert_kind_of String, @dataset.to_rdfxml
     end
   end
