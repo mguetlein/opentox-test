@@ -1,9 +1,9 @@
 #require 'nokogiri'
 
-def validate_owl(uri)
+def validate_owl(uri, subjectid=nil)
   if validator_available?
-    owl = OpenTox::RestClientWrapper.get(uri,:accept => "application/rdf+xml")
-    html = OpenTox::RestClientWrapper.post("http://www.mygrid.org.uk/OWL/Validator",{:rdf => owl, :level => "DL"})
+    owl = OpenTox::RestClientWrapper.get(uri,{:accept => "application/rdf+xml",:subjectid => subjectid})
+    html = OpenTox::RestClientWrapper.post("http://www.mygrid.org.uk/OWL/Validator",{:rdf => owl, :level => "DL",:subjectid => subjectid})
     assert_match(/YES/,html)
   else
     puts "http://www.mygrid.org.uk/OWL/Validator offline"

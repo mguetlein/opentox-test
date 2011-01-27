@@ -6,6 +6,7 @@ require "./validate-owl.rb"
 class AlgorithmTest < Test::Unit::TestCase
 
   def setup
+   @@subjectid = OpenTox::Authorization.authenticate(TEST_USER,TEST_PW) 
     @algorithms = [
       File.join(CONFIG[:services]["opentox-algorithm"],"fminer","bbrc"),
       File.join(CONFIG[:services]["opentox-algorithm"],"fminer","last"),
@@ -20,7 +21,7 @@ class AlgorithmTest < Test::Unit::TestCase
   def test_metadata
     @algorithms.each do |algorithm|
       puts algorithm
-      validate_owl(algorithm)
+      validate_owl(algorithm, @@subjectid)
     end
   end
 

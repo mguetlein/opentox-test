@@ -32,8 +32,8 @@ class ParserTest < Test::Unit::TestCase
 
   def test_dataset
     @datasets.each do |uri,properties|
-      parser = OpenTox::Parser::Owl::Dataset.new uri
-      @dataset = parser.load_uri
+      parser = OpenTox::Parser::Owl::Dataset.new uri, @@subjectid
+      @dataset = parser.load_uri(@@subjectid)
       validate properties
     end
   end

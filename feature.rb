@@ -25,7 +25,7 @@ class FeatureTest < Test::Unit::TestCase
 
   def test_owl
     #@features.each do |uri|
-      validate_owl @features.first
+      validate_owl @features.first, @@subjectid
       # Ambit does not validate
     #end
   end

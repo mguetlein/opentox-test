@@ -85,7 +85,16 @@ class TestOpenToxAuthorizationLDAP < Test::Unit::TestCase
     logout(tok_anonymous)
   end
 
-    
+  def test_03_check_different_uris
+    res = OpenTox::Authorization.send_policy(TEST_URI, @@subjectid)
+    assert OpenTox::Authorization.uri_has_policy(TEST_URI, @@subjectid)
+    assert OpenTox::Authorization.authorize(TEST_URI, "GET", @@subjectid), "GET request"
+    policies = OpenTox::Authorization.list_uri_policies(TEST_URI, @@subjectid)
+    policies.each do |policy|
+      assert OpenTox::Authorization.delete_policy(policy, @@subjectid)
+    end
+ 
+  end  
 end
 
 
