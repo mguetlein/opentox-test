@@ -31,8 +31,10 @@ class LazarTest < Test::Unit::TestCase
     model_uri = OpenTox::Algorithm::Lazar.new.run({:dataset_uri => @@classification_training_dataset.uri, :subjectid => @@subjectid}).to_s
     lazar = OpenTox::Model::Lazar.find model_uri, @@subjectid
     assert_equal lazar.features.size, 41
+
     # single prediction
     compound = OpenTox::Compound.from_smiles("c1ccccc1NN")
+    #puts compound.uri
     prediction_uri = lazar.run(:compound_uri => compound.uri, :subjectid => @@subjectid)
     prediction = OpenTox::LazarPrediction.find(prediction_uri, @@subjectid)
     assert_equal prediction.value(compound), false
@@ -44,7 +46,7 @@ class LazarTest < Test::Unit::TestCase
     prediction_uri  = lazar.run(:compound_uri => compound.uri, :subjectid => @@subjectid)
     prediction = OpenTox::LazarPrediction.find prediction_uri, @@subjectid
     assert !prediction.measured_activities(compound).empty?
-    puts prediction.measured_activities(compound).first.inspect
+    #puts prediction.measured_activities(compound).first.inspect
     assert_equal prediction.measured_activities(compound).first, true
     assert prediction.value(compound).nil?
     prediction.delete(@@subjectid)
@@ -53,13 +55,15 @@ class LazarTest < Test::Unit::TestCase
     prediction = OpenTox::LazarPrediction.find lazar.run(:dataset_uri => test_dataset.uri, :subjectid => @@subjectid), @@subjectid
     assert_equal prediction.compounds.size, 4
     compound = OpenTox::Compound.new prediction.compounds.first
-    puts "compound"
-    puts compound.inspect
-    puts "prediction"
-    puts prediction.value(compound).inspect
+    #puts "compound"
+    #puts compound.inspect
+    #puts "prediction"
+    #puts prediction.value(compound).inspect
     assert_equal prediction.value(compound), false
     prediction.delete(@@subjectid)
     lazar.delete(@@subjectid)
+=begin
+=end
   end
 
 end

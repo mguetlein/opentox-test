@@ -20,7 +20,7 @@ class AlgorithmTest < Test::Unit::TestCase
 
   def test_metadata
     @algorithms.each do |algorithm|
-      puts algorithm
+      #puts algorithm
       validate_owl(algorithm, @@subjectid)
     end
   end

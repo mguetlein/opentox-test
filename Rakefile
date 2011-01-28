@@ -1,12 +1,17 @@
 require 'rubygems'
 require 'opentox-ruby'
 
-TEST_USER = "guest"
-TEST_PW   = "guest"
+if File.exists? "auth.rb"
+  require "auth"
+else
+  #exit "Please create an authenticatio
+    TEST_USER = "guest"
+    TEST_PW   = "guest"
+end
 
 task ARGV[0] do
-  puts ENV["RACK_ENV"]
-  puts ARGV[0]+".rb"
+  puts "Environment: #{ENV["RACK_ENV"]}"
+  puts "Test: "+ARGV[0]+".rb"
   require "./"+ARGV[0]+".rb"
 end
 

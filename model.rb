@@ -17,7 +17,7 @@ class ModelTest < Test::Unit::TestCase
 
   def test_metadata
     @models.each do |model|
-      puts model
+      #puts model
       validate_owl(model)
     end
   end
