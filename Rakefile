@@ -27,6 +27,12 @@ task :teardown do
   OpenTox::Authorization.logout(@@subjectid)
 end
 
+class Exception
+  def message
+   errorCause ? errorCause.to_yaml : to_s
+  end
+end
+
 [:all, :feature, :dataset, :fminer, :lazar, :authorization].each do |t|
   task :teardown => t
   task t => :setup 
